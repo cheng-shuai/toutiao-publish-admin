@@ -16,6 +16,9 @@ import './styles/index.less'
 
 Vue.config.productionTip = false
 
+// 全局注册element组件库
+Vue.use(ElementUI)
+
 // 创建vue实例
 // 把 router 配置到根实例中
 // 通过 render 方法把 App 根组件渲染到 #app 入口节点
@@ -23,6 +26,3 @@ new Vue({
   router,
   render: h => h(App)
 }).$mount('#app')
-
-// 全局注册element组件库
-Vue.use(ElementUI)

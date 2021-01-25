@@ -98,6 +98,7 @@ export default {
       // 打开loading
       this.isLoading = true
       login(this.user).then(res => {
+        console.log(res)
         this.$message.success('登录成功')
         // 成功后关闭loading
         this.isLoading = false

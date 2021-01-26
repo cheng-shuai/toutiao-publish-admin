@@ -97,16 +97,20 @@ export default {
 
       // 打开loading
       this.isLoading = true
+
       login(this.user).then(res => {
-        console.log(res)
+        // console.log(res)
         this.$message.success('登录成功')
+
+        // 保存用户token到本地
+        window.localStorage.setItem('user', JSON.stringify(res.data.data))
         // 成功后关闭loading
         this.isLoading = false
         // 跳转到首页
         this.$router.push('/')
       }).catch(res => {
         this.$message.error('用户名或者验证码错误')
-        console.log(res)
+        // console.log(res)
         // 失败后关闭loading
         this.isLoading = false
       })

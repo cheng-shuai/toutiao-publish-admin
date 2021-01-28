@@ -93,6 +93,7 @@
           <template slot-scope="scope">
             <el-button
               type="primary"
+              @click="$router.push('/publish?id='+scope.row.id)"
               icon="el-icon-edit" circle plain></el-button>
             <el-button
               type="danger"

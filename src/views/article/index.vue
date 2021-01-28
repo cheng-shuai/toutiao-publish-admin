@@ -214,6 +214,7 @@ export default {
   width: 150px;
   height: 100px;
 }
+
 .pagination {
   display: block;
   text-align: right;

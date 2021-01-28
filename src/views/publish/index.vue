@@ -4,7 +4,7 @@
       <div slot="header" class="clearfix">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>{{this.$route.query.id ? '修改文章' : '发布文章'}}</el-breadcrumb-item>
+          <el-breadcrumb-item>{{ this.$route.query.id ? '修改文章' : '发布文章' }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <!--      表单-->
@@ -13,7 +13,12 @@
           <el-input v-model="article.title"></el-input>
         </el-form-item>
         <el-form-item label="内容">
-          <el-input type="textarea" v-model="article.content"></el-input>
+          <el-tiptap
+            v-model="article.content"
+            lang="zh"
+            height="400"
+            :extensions="extensions"
+          />
         </el-form-item>
         <el-form-item label="封面">
           <el-radio-group v-model="article.cover.type">
@@ -41,6 +46,30 @@
 <script>
 // 导入获取文章频道列表
 import { getArticleChannels, publishArticle, getArticle, updateArticle } from '@/api/article'
+// 导入富文本编辑器
+import {
+  ElementTiptap,
+  Doc,
+  Text,
+  Paragraph,
+  Heading,
+  Bold,
+  Underline,
+  Italic,
+  Image,
+  Strike,
+  ListItem,
+  BulletList,
+  OrderedList,
+  TodoItem,
+  TodoList,
+  HorizontalRule,
+  Fullscreen,
+  Preview,
+  CodeBlock
+} from 'element-tiptap'
+// import element-tiptap 样式
+import 'element-tiptap/lib/index.css'
 
 export default {
   name: 'Publish',
@@ -55,7 +84,27 @@ export default {
         },
         channel_id: null // 文章所属id
       },
-      channels: [] // 文章频道列表
+      channels: [], // 文章频道列表
+      extensions: [
+        new Doc(),
+        new Text(),
+        new Paragraph(),
+        new Heading({ level: 3 }),
+        new Bold({ bubble: true }), // 在气泡菜单中渲染菜单按钮
+        new Image(),
+        new Underline(), // 下划线
+        new Italic(), // 斜体
+        new Strike(), // 删除线
+        new HorizontalRule(), // 华丽的分割线
+        new ListItem(),
+        new BulletList(), // 无序列表
+        new OrderedList(), // 有序列表
+        new TodoItem(),
+        new TodoList(),
+        new Fullscreen(),
+        new Preview(),
+        new CodeBlock()
+      ]
     }
   },
   created () {
@@ -98,6 +147,9 @@ export default {
         this.article = res.data.data
       })
     }
+  },
+  components: {
+    'el-tiptap': ElementTiptap
   }
 }
 </script>

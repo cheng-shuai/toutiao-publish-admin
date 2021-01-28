@@ -71,6 +71,9 @@ import {
 // import element-tiptap 样式
 import 'element-tiptap/lib/index.css'
 
+// 上传图片
+import { uploadImage } from '@/api/image'
+
 export default {
   name: 'Publish',
   data () {
@@ -91,7 +94,15 @@ export default {
         new Paragraph(),
         new Heading({ level: 3 }),
         new Bold({ bubble: true }), // 在气泡菜单中渲染菜单按钮
-        new Image(),
+        new Image({
+          uploadRequest (file) {
+            const fd = new FormData()
+            fd.append('image', file)
+            return uploadImage(fd).then(res => {
+              return res.data.data.url
+            })
+          }
+        }),
         new Underline(), // 下划线
         new Italic(), // 斜体
         new Strike(), // 删除线

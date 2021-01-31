@@ -8,11 +8,11 @@
         </el-breadcrumb>
       </div>
       <!--      表单-->
-      <el-form :model="article" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="标题" class="title-item">
+      <el-form :rules="publishRules" :model="article" ref="publishRef" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="标题" class="title-item" prop="title">
           <el-input v-model="article.title"></el-input>
         </el-form-item>
-        <el-form-item label="内容">
+        <el-form-item label="内容" prop="content">
           <el-tiptap
             v-model="article.content"
             lang="zh"
@@ -28,7 +28,7 @@
             <el-radio :label="-1">自动</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="频道">
+        <el-form-item label="频道" prop="channel_id">
           <el-select v-model="article.channel_id" placeholder="请选择频道">
             <el-option :label="channel.name" :value="channel.id" v-for="(channel, index) in channels"
                        :key="index"></el-option>
@@ -115,7 +115,47 @@ export default {
         new Fullscreen(),
         new Preview(),
         new CodeBlock()
-      ]
+      ],
+      publishRules: {
+        title: [
+          {
+            required: true,
+            message: '请输入活动名称',
+            trigger: 'blur'
+          },
+          {
+            min: 5,
+            max: 30,
+            message: '长度在 5 到 30 个字符',
+            trigger: 'blur'
+          }
+        ],
+        content: [
+          {
+            required: true,
+            message: '请输入活动名称',
+            trigger: 'blur'
+          },
+          {
+            validator (rule, value, callback) {
+              if (value === '<p></p>') {
+                // 验证失败
+                callback(new Error('请输入文章内容'))
+              } else {
+                // 验证通过
+                callback()
+              }
+            }
+          }
+        ],
+        channel_id: [
+          {
+            required: true,
+            message: '请选择频道列表',
+            trigger: 'change'
+          }
+        ]
+      }
     }
   },
   created () {
@@ -132,26 +172,38 @@ export default {
       })
     },
     onPushArticle () {
-      const articleId = this.$route.query.id
-      if (articleId) {
-        updateArticle(articleId, false, this.article).then(res => {
-          this.$message.success('修改成功')
-          this.$router.push('/article')
-        })
-      } else {
-        publishArticle(false, this.article).then(res => {
-          this.$message.success('发布成功')
-          this.$router.push('/article')
-        })
-      }
+      this.$refs.publishRef.validate(valid => {
+        if (!valid) {
+          return false
+        } else {
+          const articleId = this.$route.query.id
+          if (articleId) {
+            updateArticle(articleId, false, this.article).then(res => {
+              this.$message.success('修改成功')
+              this.$router.push('/article')
+            })
+          } else {
+            publishArticle(false, this.article).then(res => {
+              this.$message.success('发布成功')
+              this.$router.push('/article')
+            })
+          }
+        }
+      })
     },
     onSaveDraft () {
-      const articleId = this.$route.query.id
-      if (articleId) {
-        updateArticle(articleId, true, this.article)
-      }
-      publishArticle(true, this.article)
-      this.$message.success('保存为草稿成功')
+      this.$refs.publishRef.validate(valid => {
+        if (!valid) {
+          return false
+        } else {
+          const articleId = this.$route.query.id
+          if (articleId) {
+            updateArticle(articleId, true, this.article)
+          }
+          publishArticle(true, this.article)
+          this.$message.success('保存为草稿成功')
+        }
+      })
     },
     loadArticle (artileId) {
       getArticle(artileId).then(res => {

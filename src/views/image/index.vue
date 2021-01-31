@@ -7,46 +7,17 @@
           <el-breadcrumb-item>素材管理</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <el-radio-group v-model="radio1" style="margin-bottom: 20px;">
-        <el-radio-button label="全部"></el-radio-button>
-        <el-radio-button label="北京"></el-radio-button>
+      <el-radio-group v-model="collect" style="margin-bottom: 20px;" @change="onChangeCollect">
+        <el-radio-button :label="false">全部</el-radio-button>
+        <el-radio-button :label="true">收藏</el-radio-button>
       </el-radio-group>
       <!--      素材图片-->
       <el-row :gutter="20">
-        <el-col :xs="12" :sm="8" :md="6" :lg="4">
+        <el-col :xs="12" :sm="8" :md="6" :lg="4"
+                v-for="(img, index) in images" :key="index">
           <el-image
-            style=" height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            fit="cover"></el-image>
-        </el-col>
-        <el-col :xs="12" :sm="8" :md="6" :lg="4">
-          <el-image
-            style="height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            fit="cover"></el-image>
-        </el-col>
-        <el-col :xs="12" :sm="8" :md="6" :lg="4">
-          <el-image
-            style="height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            fit="cover"></el-image>
-        </el-col>
-        <el-col :xs="12" :sm="8" :md="6" :lg="4">
-          <el-image
-            style="height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            fit="cover"></el-image>
-        </el-col>
-        <el-col :xs="12" :sm="8" :md="6" :lg="4">
-          <el-image
-            style="height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            fit="cover"></el-image>
-        </el-col>
-        <el-col :xs="12" :sm="8" :md="6" :lg="4">
-          <el-image
-            style="height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+            style=" height: 180px; width: 180px"
+            :src="img.url"
             fit="cover"></el-image>
         </el-col>
       </el-row>
@@ -55,11 +26,30 @@
 </template>
 
 <script>
+import { getImages } from '@/api/image'
+
 export default {
   name: 'ImageIndex',
   data () {
     return {
-      radio1: '全部'
+      collect: false,
+      images: []
+    }
+  },
+  created () {
+    this.loadImages(false)
+  },
+  methods: {
+    loadImages (collect) {
+      getImages({
+        collect,
+        per_page: 12
+      }).then(res => {
+        this.images = res.data.data.results
+      })
+    },
+    onChangeCollect (value) {
+      this.loadImages(value)
     }
   }
 }

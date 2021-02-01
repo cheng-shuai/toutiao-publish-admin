@@ -21,19 +21,57 @@
           <el-image
             style=" height: 180px; width: 180px"
             :src="img.url"
-            fit="cover"></el-image>
+            fit="cover"
+          ></el-image>
+          <div class="select-btn">
+            <i :class="{
+              'el-icon-star-on': img.is_collected,
+              'el-icon-star-off': !img.is_collected
+            }"
+               @click="onCollectImage(img)"
+            ></i>
+            <i class="el-icon-delete"
+               @click="onDeleteImage(img)"></i>
+          </div>
         </el-col>
       </el-row>
+      <!--      分页-->
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        @current-change="onCurrentChange"
+        :current-page="page"
+        :total="totalCount"
+        :page-size="12"
+        :hide-on-single-page="true"
+      >
+      </el-pagination>
     </el-card>
     <!--    弹出层（上传图片）-->
-    <el-dialog title="上传素材" :visible.sync="dialogUploadVisible" :append-to-body="true">
-      hello world
+    <el-dialog
+      width="400px"
+      title="上传素材"
+      :visible.sync="dialogUploadVisible"
+      :append-to-body="true"
+    >
+      <el-upload
+        drag
+        :show-file-list="false"
+        :headers="uploadHeaders"
+        name="image"
+        :on-success="uploadSuccess"
+        action="http://api-toutiao-web.itheima.net/mp/v1_0/user/images"
+        multiple>
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+      </el-upload>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getImages } from '@/api/image'
+import { getImages, collectImage, delectImage } from '@/api/image'
 
 export default {
   name: 'ImageIndex',
@@ -41,23 +79,57 @@ export default {
     return {
       collect: false,
       images: [],
-      dialogUploadVisible: false
+      dialogUploadVisible: false,
+      uploadHeaders: {
+        Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('user')).token}`
+      },
+      totalCount: null,
+      page: 1,
+      currentType: false
     }
   },
   created () {
     this.loadImages(false)
   },
   methods: {
-    loadImages (collect) {
+    loadImages (collect, page = 1) {
       getImages({
         collect,
+        page,
         per_page: 12
       }).then(res => {
+        this.page = page
+        this.totalCount = res.data.data.total_count
         this.images = res.data.data.results
       })
     },
     onChangeCollect (value) {
       this.loadImages(value)
+      this.currentType = value
+    },
+    uploadSuccess () {
+      this.dialogUploadVisible = false
+      this.loadImages(false)
+      this.$message.success('上传素材成功')
+    },
+    onCurrentChange (page) {
+      this.loadImages(this.currentType, page)
+    },
+    onCollectImage (img) {
+      collectImage(img.id, !img.is_collected).then(res => {
+        img.is_collected = !img.is_collected
+        if (img.is_collected) {
+          this.$message.success('收藏图片成功')
+        } else {
+          this.$message.success('取消收藏图片成功')
+        }
+      })
+    },
+    onDeleteImage (img) {
+      delectImage(img.id).then(res => {
+        this.loadImages(false, this.page)
+        this.$message.success('删除图片成功')
+      })
     }
   }
 }
@@ -68,5 +140,22 @@ export default {
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
+}
+
+.select-btn {
+  position: relative;
+  bottom: 0;
+  top: -35px;
+  width: 180px;
+  height: 30px;
+  background: rgba(0, 0, 0, .1);
+  display: flex;
+  font-size: 21px;
+  justify-content: space-around;
+  align-items: center;
+
+  i {
+    cursor: pointer;
+  }
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
   <div class="home-container">
-    首页
   </div>
 </template>
 
@@ -11,5 +10,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+.home-container {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: url("http://toutiao-img.itheima.net/Fqn4YqWwsgHMkVMF6-clzFHBdKoT") no-repeat center center;
+}
 </style>

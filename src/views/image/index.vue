@@ -36,16 +36,17 @@
         </el-col>
       </el-row>
       <!--      分页-->
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        @current-change="onCurrentChange"
-        :current-page="page"
-        :total="totalCount"
-        :page-size="12"
-        :hide-on-single-page="true"
-      >
-      </el-pagination>
+      <div style="display: flex; justify-content: flex-end;">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          @current-change="onCurrentChange"
+          :current-page="page"
+          :total="totalCount"
+          :hide-on-single-page="true"
+        >
+        </el-pagination>
+      </div>
     </el-card>
     <!--    弹出层（上传图片）-->
     <el-dialog

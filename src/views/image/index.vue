@@ -7,10 +7,13 @@
           <el-breadcrumb-item>素材管理</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <el-radio-group v-model="collect" style="margin-bottom: 20px;" @change="onChangeCollect">
-        <el-radio-button :label="false">全部</el-radio-button>
-        <el-radio-button :label="true">收藏</el-radio-button>
-      </el-radio-group>
+      <div class="action-head">
+        <el-radio-group v-model="collect" @change="onChangeCollect" size="medium">
+          <el-radio-button :label="false">全部</el-radio-button>
+          <el-radio-button :label="true">收藏</el-radio-button>
+        </el-radio-group>
+        <el-button type="success" size="medium" @click="dialogUploadVisible = true">上传素材</el-button>
+      </div>
       <!--      素材图片-->
       <el-row :gutter="20">
         <el-col :xs="12" :sm="8" :md="6" :lg="4"
@@ -22,6 +25,10 @@
         </el-col>
       </el-row>
     </el-card>
+    <!--    弹出层（上传图片）-->
+    <el-dialog title="上传素材" :visible.sync="dialogUploadVisible" :append-to-body="true">
+      hello world
+    </el-dialog>
   </div>
 </template>
 
@@ -33,7 +40,8 @@ export default {
   data () {
     return {
       collect: false,
-      images: []
+      images: [],
+      dialogUploadVisible: false
     }
   },
   created () {
@@ -56,5 +64,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+.action-head {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
 </style>

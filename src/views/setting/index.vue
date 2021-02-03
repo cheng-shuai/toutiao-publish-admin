@@ -20,7 +20,6 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">保存设置</el-button>
-            <el-button>取消</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -50,7 +49,7 @@
       @closed="closeAfter"
     >
       <div class="preview-image-wrap">
-        <img ref="preview-image" :src="previewImage" class="preview-image">
+        <img ref="preview-image" :src="previewImage" class="preview-image" alt="">
       </div>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
@@ -61,7 +60,7 @@
 </template>
 
 <script>
-import { getUserProfile, uploadAvatar, editUserProfile } from '@/api/setting'
+import { editUserProfile, getUserProfile, uploadAvatar } from '@/api/setting'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 
@@ -117,7 +116,7 @@ export default {
         intro: this.userProfile.intro,
         email: this.userProfile.email
       }).then(res => {
-        console.log(res)
+        this.$message.success('修改资料成功')
       })
     },
     loadUserProfile () {
@@ -131,8 +130,7 @@ export default {
 
       // 显示预览图片
       const file = this.$refs.file
-      const blobData = window.URL.createObjectURL(file.files[0])
-      this.previewImage = blobData
+      this.previewImage = window.URL.createObjectURL(file.files[0])
 
       // 结局相同文件不触发change事件
       this.$refs.file.value = ''

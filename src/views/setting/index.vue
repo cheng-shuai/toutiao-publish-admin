@@ -63,6 +63,7 @@
 import { editUserProfile, getUserProfile, uploadAvatar } from '@/api/setting'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
+import globalBus from '@/utils/global-bus'
 
 export default {
   name: 'Setting',
@@ -81,9 +82,9 @@ export default {
             trigger: 'blur'
           },
           {
-            min: 3,
-            max: 15,
-            message: '长度在 3 到 15 个字符',
+            min: 1,
+            max: 7,
+            message: '长度在 1 到 7 个字符',
             trigger: 'change'
           }
         ],
@@ -118,6 +119,8 @@ export default {
       }).then(res => {
         this.$message.success('修改资料成功')
       })
+      // 修改顶部用户名信息
+      globalBus.$emit('update-user', this.userProfile)
     },
     loadUserProfile () {
       getUserProfile().then(res => {
@@ -162,6 +165,8 @@ export default {
           this.isLoading = false
           // 修改用户头像成功
           this.$message.success('修改用户头像成功')
+          // 修改顶部的头像信息
+          globalBus.$emit('update-user', this.userProfile)
         })
       })
     }

@@ -21,7 +21,7 @@
               <i class="el-icon-arrow-down"></i>
             </div>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item><i class="el-icon-setting"></i>个人设置</el-dropdown-item>
+              <el-dropdown-item  @click.native="goSetting"><i class="el-icon-setting"></i>个人设置</el-dropdown-item>
               <el-dropdown-item @click.native="onLogout"><i class="el-icon-unlock"></i>退出登录
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -38,6 +38,7 @@
 <script>
 import AppAside from '@/views/layout/components/AppAside'
 import { getUserProfile } from '@/api/user'
+import globalBus from '@/utils/global-bus'
 
 export default {
   name: 'Layout',
@@ -52,6 +53,11 @@ export default {
   },
   created () {
     this.loadUserProfile()
+    // 注册事件
+    globalBus.$on('update-user', (data) => {
+      this.user.name = data.name
+      this.user.photo = data.photo
+    })
   },
   methods: {
     loadUserProfile () {
@@ -61,7 +67,7 @@ export default {
     },
     onLogout () {
       this.$confirm('确认退出吗？')
-        .then(_ => {
+        .then(() => {
           // 移除用户信息
           window.localStorage.removeItem('user')
           // 跳转到登录页面
@@ -71,6 +77,9 @@ export default {
         .catch(_ => {
           this.$message.warning('已取消退出')
         })
+    },
+    goSetting () {
+      this.$router.push('/setting')
     }
   }
 }

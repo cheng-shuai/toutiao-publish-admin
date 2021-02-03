@@ -2,20 +2,20 @@
   <div class="setting-container">
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form :model="userProfile" label-width="80px">
+        <el-form :model="userProfile" label-width="80px" :rules="formRules">
           <el-form-item label="编号">
             <el-input v-model="userProfile.id"></el-input>
           </el-form-item>
           <el-form-item label="手机">
             <el-input v-model="userProfile.mobile"></el-input>
           </el-form-item>
-          <el-form-item label="媒体名称">
+          <el-form-item label="媒体名称" prop="name">
             <el-input v-model="userProfile.name"></el-input>
           </el-form-item>
-          <el-form-item label="媒体介绍">
+          <el-form-item label="媒体介绍" prop="intro">
             <el-input type="textarea" v-model="userProfile.intro"></el-input>
           </el-form-item>
-          <el-form-item label="邮箱">
+          <el-form-item label="邮箱" prop="email">
             <el-input v-model="userProfile.email"></el-input>
           </el-form-item>
           <el-form-item>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { getUserProfile, uploadAvatar } from '@/api/setting'
+import { getUserProfile, uploadAvatar, editUserProfile } from '@/api/setting'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 
@@ -73,12 +73,52 @@ export default {
       previewImage: '',
       dialogVisible: false,
       cropper: null, // 裁切器实例
-      isLoading: false // 按钮loading状态
+      isLoading: false, // 按钮loading状态
+      formRules: {
+        name: [
+          {
+            required: true,
+            message: '请输入媒体名称',
+            trigger: 'blur'
+          },
+          {
+            min: 3,
+            max: 15,
+            message: '长度在 3 到 15 个字符',
+            trigger: 'change'
+          }
+        ],
+        intro: [
+          {
+            required: true,
+            message: '请输入媒体的介绍',
+            trigger: 'blur'
+          }
+        ],
+        email: [
+          {
+            required: true,
+            message: '请输入邮箱地址',
+            trigger: 'blur'
+          },
+          {
+            type: 'email',
+            message: '请输入正确的邮箱地址',
+            trigger: ['blur', 'change']
+          }
+        ]
+      }
     }
   },
   methods: {
     onSubmit () {
-      console.log(111)
+      editUserProfile({
+        name: this.userProfile.name,
+        intro: this.userProfile.intro,
+        email: this.userProfile.email
+      }).then(res => {
+        console.log(res)
+      })
     },
     loadUserProfile () {
       getUserProfile().then(res => {

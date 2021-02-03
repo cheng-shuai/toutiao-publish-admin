@@ -54,7 +54,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="onUpdateAvatar">确 定</el-button>
+    <el-button type="primary" @click="onUpdateAvatar" :loading="isLoading">确 定</el-button>
   </span>
     </el-dialog>
   </div>
@@ -72,7 +72,8 @@ export default {
       userProfile: {},
       previewImage: '',
       dialogVisible: false,
-      cropper: null // 裁切器实例
+      cropper: null, // 裁切器实例
+      isLoading: false // 按钮loading状态
     }
   },
   methods: {
@@ -109,6 +110,7 @@ export default {
       this.cropper.destroy()
     },
     onUpdateAvatar () {
+      this.isLoading = true
       this.cropper.getCroppedCanvas().toBlob(blob => {
         const fd = new FormData()
         fd.append('photo', blob)
@@ -118,6 +120,8 @@ export default {
           this.dialogVisible = false
           // 从服务端更新用户头像
           this.userProfile.photo = res.data.data.photo
+          // 更新完头像后loading关闭
+          this.isLoading = false
           // 修改用户头像成功
           this.$message.success('修改用户头像成功')
         })

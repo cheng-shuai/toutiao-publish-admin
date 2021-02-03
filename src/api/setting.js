@@ -20,6 +20,7 @@ export const getUserProfile = () => {
 export const uploadAvatar = (data) => {
   return request({
     method: 'PATCH',
-    url: '/mp/v1_0/user/photo'
+    url: '/mp/v1_0/user/photo',
+    data
   })
 }

@@ -30,7 +30,7 @@
             shape="square"
             :size="178"
             fit="cover"
-            :src="previewImage"></el-avatar>
+            :src="userProfile.photo"></el-avatar>
           <p>点击修改头像</p>
         </label>
         <input
@@ -45,36 +45,34 @@
     <el-dialog
       title="更换头像"
       append-to-body
-      :visible.sync="dialogVisible">
-      <img :src="previewImage" alt="" width="178" height="178">
+      :visible.sync="dialogVisible"
+      @opened="openAfter"
+      @closed="closeAfter"
+    >
+      <div class="preview-image-wrap">
+        <img ref="preview-image" :src="previewImage" class="preview-image">
+      </div>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+    <el-button type="primary" @click="onUpdateAvatar">确 定</el-button>
   </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getUserProfile } from '@/api/setting'
+import { getUserProfile, uploadAvatar } from '@/api/setting'
+import 'cropperjs/dist/cropper.css'
+import Cropper from 'cropperjs'
 
 export default {
   name: 'Setting',
   data () {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
       userProfile: {},
       previewImage: '',
-      dialogVisible: false
+      dialogVisible: false,
+      cropper: null // 裁切器实例
     }
   },
   methods: {
@@ -97,6 +95,33 @@ export default {
 
       // 结局相同文件不触发change事件
       this.$refs.file.value = ''
+    },
+    openAfter () {
+      const image = this.$refs['preview-image']
+      this.cropper = new Cropper(image, {
+        aspectRatio: 1,
+        viewMode: 1,
+        dragMode: 'none',
+        movable: true
+      })
+    },
+    closeAfter () {
+      this.cropper.destroy()
+    },
+    onUpdateAvatar () {
+      this.cropper.getCroppedCanvas().toBlob(blob => {
+        const fd = new FormData()
+        fd.append('photo', blob)
+        // 请求更新用户头像提交fd
+        uploadAvatar(fd).then(res => {
+          // 关闭弹出层
+          this.dialogVisible = false
+          // 从服务端更新用户头像
+          this.userProfile.photo = res.data.data.photo
+          // 修改用户头像成功
+          this.$message.success('修改用户头像成功')
+        })
+      })
     }
   },
   created () {
@@ -110,5 +135,14 @@ export default {
   display: flex;
   justify-content: center;
   text-align: center;
+}
+
+.preview-image-wrap {
+  .preview-image {
+    display: block;
+    height: 250px;
+    /* This rule is very important, please don't ignore this */
+    max-width: 100%;
+  }
 }
 </style>

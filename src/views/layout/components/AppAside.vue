@@ -1,10 +1,10 @@
 <template>
   <el-menu
     default-active="/"
+    router
     background-color="#002033"
     text-color="#fff"
     active-text-color="#ffd04b"
-    router
     :collapse="isCollapse"
     :collapse-transition="false"
   >
@@ -47,6 +47,11 @@ export default {
   data () {
     return {
       // isCollapse: false
+    }
+  },
+  computed: {
+    defaultActive () {
+      return '/' + this.$route.path.split('/').reverse()[0]
     }
   }
 }

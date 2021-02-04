@@ -54,7 +54,6 @@ export default {
   methods: {
     loadFansList () {
       getFansList().then(res => {
-        console.log(res)
         this.fansList = res.data.data.results
         this.totalCount = res.data.data.total_count
       })

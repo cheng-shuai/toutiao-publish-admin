@@ -24,7 +24,7 @@ const routes = [
     component: Layout,
     children: [
       {
-        path: '', // path 为空,会默认作为子路由渲染
+        path: '/', // path 为空,会默认作为子路由渲染
         name: 'home',
         component: Home
       },

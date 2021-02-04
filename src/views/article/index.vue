@@ -173,7 +173,6 @@ export default {
       })
     },
     onDeleteArticle (articleId) {
-      console.log(articleId)
       this.$confirm('确认删除文章吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

@@ -20,12 +20,19 @@
           />
         </el-tab-pane>
         <el-tab-pane label="上传图片" name="upload">
+          <label for="file" style="display: flex; justify-content: center;">
+            <div  style="width: 150px; height: 150px; border: 1px dashed; border-radius: 6px">
+              <i v-if="!this.file" class="el-icon-plus" style="font-size: 150px; color: #ccc;"></i>
+              <img v-else width="150" height="150" ref="preview-image" :src="previewImage" alt="">
+            </div>
+          </label>
           <input
+            id="file"
             type="file"
             ref="file"
             @change="onFileChange"
+            hidden
           >
-          <img width="150" ref="preview-image" src="" alt="">
         </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
@@ -46,7 +53,9 @@ export default {
   data () {
     return {
       dialogVisible: false,
-      activeName: 'material'
+      activeName: 'material',
+      file: null,
+      previewImage: ''
     }
   },
   components: {
@@ -58,8 +67,9 @@ export default {
     },
     onFileChange () {
       const file = this.$refs.file.files[0]
+      this.file = file
 
-      this.$refs['preview-image'].src = window.URL.createObjectURL(file)
+      this.previewImage = window.URL.createObjectURL(file)
       // // 防止上传相同文件不触发change事件
       // this.$refs.file.value = ''
     },
@@ -100,9 +110,11 @@ export default {
     width: 150px;
     height: 150px;
     border: 1px dashed #ccc;
+
     img {
       width: 100%;
     }
+
     .upload-image {
       width: 150px;
       height: 150px;
